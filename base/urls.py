@@ -10,7 +10,11 @@ urlpatterns = [
     path('homelogin/', views.homelogin, name='homelogin'),
     path('signup/', views.signup_view, name='signup'),
     path('Registro/', views.insertar_registro, name='Registro'),
-
-
-
+    path('HeaderLogin/', views.headerlogin, name='HeaderLogin'),
+    path('Header/', views.header, name='Header'),
+    path('adminlogin/',views.login_viewadmin, name='adminlogin'),
+    path('adminview/', views.admin_view, name='adminview'),
+    path('homeloginadmin/', views.homeloginadmin, name='homeloginadmin'),
+    path('headeradminlogin/', views.headeradminlogin, name='headeradminlogin'),
+    path('mostrar_registros/', views.mostrar_registros, name='mostrar_registros'),
 ]

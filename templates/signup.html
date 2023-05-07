@@ -1,11 +1,66 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Registrarse</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Registrarse</button>
-  </form>
-  
+<style>
+  body {
+    background-color: #D29431; /* Cambia el color de fondo a tu preferencia */
+  }
+
+  .login-form {
+    background-color: #24514C;
+    color: #000000;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  form input[type="text"],
+  form input[type="password"] {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: 50%;
+  }
+
+  form button {
+    background-color: #D29431;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  form button:hover {
+    background-color: #704f19;
+  }
+</style>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="login-form">
+          <h2>Registrarse</h2>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Registrarse</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
