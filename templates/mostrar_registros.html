@@ -1,19 +1,22 @@
+{% if registros %}
 <table>
-    <thead>
-      <tr>
-        <th>Número de edificio</th>
-        <th>Nombre del residente</th>
-        <th>Área</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for reserva in reservas %}
-      <tr>
-        <td>{{ reserva.NumeroEdificio }}</td>
-        <td>{{ reserva.NombreResidente }}</td>
-        <td>{{ reserva.Area }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  
+  <thead>
+    <tr>
+      <th>Numero de edificio</th>
+      <th>Nombre del residente</th>
+      <th>Area</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for registro in registros %}
+    <tr>
+      <td>{{ registro.0 }}</td>
+      <td>{{ registro.1 }}</td>
+      <td>{{ registro.2 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>{{ mensaje }}</p>
+{% endif %}

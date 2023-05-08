@@ -95,5 +95,16 @@ def insertar_registro(request):
     return render(request, 'Registro.html', {'form': form, 'mensaje': mensaje})
 #######################################################################################################
 def mostrar_registros(request):
-    reservamicondominio = reservamicondominio.objects.all()
-    return render(request, 'mostrar_registros.html', {'reservamicondominio': reservamicondominio})
+    try:
+        mensaje = ""
+        conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+        cursor = conexion.cursor()
+        cursor.execute("SELECT NumeroEdificio, NombreResidente, Area FROM reservamicondominio")
+        registros = cursor.fetchall()
+    except Exception as e:
+        registros = None
+        mensaje = "Error al obtener registros: " + str(e)
+    finally:
+        cursor.close()
+        conexion.close()
+    return render(request, 'mostrar_registros.html', {'registros': registros, 'mensaje': mensaje})
