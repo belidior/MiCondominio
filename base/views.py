@@ -81,7 +81,7 @@ def insertar_registro(request):
             try:
                 conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
                 cursor = conexion.cursor()
-                cursor.execute("INSERT INTO reservamicondominio(NumeroEdificio, NombreResidente, Area) VALUES (:1, :2, :3)", [datos['NumeroEdificio'], datos['NombreResidente'], datos['Area']])
+                cursor.execute("INSERT INTO reservamicondominio(NumeroEdificio, NombreResidente, Area, FechaEstimada) VALUES (:1, :2, :3, :4)", [datos['NumeroEdificio'], datos['NombreResidente'], datos['Area'], datos['FechaEstimada']])
                 conexion.commit()
                 mensaje = "Solicitud enviada correctamente, le llegara una noticicacion a su correo en caso de ser aprobada"
             except Exception as e:
@@ -99,7 +99,7 @@ def mostrar_registros(request):
         mensaje = ""
         conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
         cursor = conexion.cursor()
-        cursor.execute("SELECT NumeroEdificio, NombreResidente, Area FROM reservamicondominio")
+        cursor.execute("SELECT NumeroEdificio, NombreResidente, Area, FechaEstimada FROM reservamicondominio")
         registros = cursor.fetchall()
     except Exception as e:
         registros = None

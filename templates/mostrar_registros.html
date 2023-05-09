@@ -30,6 +30,7 @@
             <th>NumeroEdificio</th>
             <th>NombreResidente</th>
             <th>Area</th>
+            <th>Fecha y Hora</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -39,6 +40,7 @@
               <td>{{ registro.0 }}</td>
               <td>{{ registro.1 }}</td>
               <td>{{ registro.2 }}</td>
+              <td>{{ registro.3 }}</td>
               <td>
                 <form action="{% url 'eliminar_registro' registro.0 %}" method="POST">
                   {% csrf_token %}

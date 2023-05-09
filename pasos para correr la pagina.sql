@@ -13,11 +13,13 @@ pasos para instalar la pagina correctamente
 
 5. Luego de crear el usuario en oracle, ingresamos el siguiente comando python manage.py migrate
 6. En el usuario creado de sql ingresamos la siguiente TABLA
-	CREATE TABLE reservamicondominio (
-	  NumeroEdificio INT PRIMARY KEY,
-	  NombreResidente VARCHAR(50),
-	  Area VARCHAR(10)
-	);
+			CREATE TABLE reservamicondominio (
+			NumeroEdificio INTEGER PRIMARY KEY,
+			NombreResidente VARCHAR2(50),
+			Area VARCHAR2(10),
+			FechaEstimada TIMESTAMP
+			);
+
 7. ingresamos el siguiente comando python manage.py makemigrations
 8. En settings y en el .views de la pagina cambiamos la direccion de la base de datos.
 9. tiramos a andar la pagina con python manage.py runserver
