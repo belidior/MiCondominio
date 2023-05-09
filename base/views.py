@@ -108,3 +108,20 @@ def mostrar_registros(request):
         cursor.close()
         conexion.close()
     return render(request, 'mostrar_registros.html', {'registros': registros, 'mensaje': mensaje})
+#######################################################################################################
+def eliminar_registro(request, numero_edificio):
+    try:
+        conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+        cursor = conexion.cursor()
+        cursor.execute("DELETE FROM reservamicondominio WHERE NumeroEdificio = :1", [numero_edificio])
+        conexion.commit()
+        mensaje = "Registro eliminado correctamente"
+    except Exception as e:
+        mensaje = "Error al eliminar registro: " + str(e)
+    finally:
+        cursor.close()
+        conexion.close()
+    return redirect('mostrar_registros')
+
+
+
