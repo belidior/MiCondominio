@@ -20,6 +20,20 @@ pasos para instalar la pagina correctamente
 			FechaEstimada TIMESTAMP
 			);
 
+			CREATE TABLE reservarechazada (
+    		NumeroEdificio NUMBER(10) PRIMARY KEY,
+    		NombreResidente VARCHAR2(50),
+    		Area VARCHAR2(10),
+    		FechaEstimada TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			);
+
+			CREATE TABLE reservaaceptada (
+			NumeroEdificio NUMBER(10) PRIMARY KEY,
+			NombreResidente VARCHAR2(50),
+			Area VARCHAR2(10),
+			FechaEstimada TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			);
+
 7. ingresamos el siguiente comando python manage.py makemigrations
 8. En settings y en el .views de la pagina cambiamos la direccion de la base de datos.
 9. tiramos a andar la pagina con python manage.py runserver

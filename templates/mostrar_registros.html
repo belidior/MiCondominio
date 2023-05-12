@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -42,11 +40,18 @@
               <td>{{ registro.2 }}</td>
               <td>{{ registro.3 }}</td>
               <td>
+                <form action="{% url 'aceptar_registro' registro.0 %}" method="POST">
+                  {% csrf_token %}
+                  <div class="btn-group" role="group" aria-label="Acciones">
+                    <button type="submit" class="btn btn-success">Aceptar</button>
+                  </div>
+                </form>
+              </td>
+              <td>
                 <form action="{% url 'eliminar_registro' registro.0 %}" method="POST">
                   {% csrf_token %}
                   <div class="btn-group" role="group" aria-label="Acciones">
-                    <button type="submit" class="btn btn-primary">Aceptar</button>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger">Rechazar</button>
                   </div>
                 </form>
               </td>
@@ -58,4 +63,3 @@
     {% endblock content %}
   </body>
 </html>
-

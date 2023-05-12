@@ -113,15 +113,60 @@ def eliminar_registro(request, numero_edificio):
     try:
         conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
         cursor = conexion.cursor()
-        cursor.execute("DELETE FROM reservamicondominio WHERE NumeroEdificio = :1", [numero_edificio])
-        conexion.commit()
-        mensaje = "Registro eliminado correctamente"
+        
+        # Obtén los datos del registro que deseas mover
+        cursor.execute("SELECT * FROM reservamicondominio WHERE NumeroEdificio = :1", [numero_edificio])
+        datos_registro = cursor.fetchone()
+        
+        if datos_registro:
+            # Inserta los datos en la otra tabla
+            cursor.execute("INSERT INTO reservarechazada(NumeroEdificio, NombreResidente, Area, FechaEstimada) VALUES (:1, :2, :3, :4)", datos_registro)
+            
+            # Elimina el registro de la tabla original
+            cursor.execute("DELETE FROM reservamicondominio WHERE NumeroEdificio = :1", [numero_edificio])
+            conexion.commit()
+            
+            mensaje = "Registro rechazado correctamente"
+        else:
+            mensaje = "No se encontró el registro"
+            
     except Exception as e:
-        mensaje = "Error al eliminar registro: " + str(e)
+        mensaje = "Error al mover registro: " + str(e)
+        
     finally:
         cursor.close()
         conexion.close()
+        
     return redirect('mostrar_registros')
-
+#######################################################################################################
+def aceptar_registro(request, numero_edificio):
+    try:
+        conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+        cursor = conexion.cursor()
+        
+        # Obtén los datos del registro que deseas mover
+        cursor.execute("SELECT * FROM reservamicondominio WHERE NumeroEdificio = :1", [numero_edificio])
+        datos_registro = cursor.fetchone()
+        
+        if datos_registro:
+            # Inserta los datos en la otra tabla
+            cursor.execute("INSERT INTO reservaaceptada(NumeroEdificio, NombreResidente, Area, FechaEstimada) VALUES (:1, :2, :3, :4)", datos_registro)
+            
+            # Elimina el registro de la tabla original
+            cursor.execute("DELETE FROM reservamicondominio WHERE NumeroEdificio = :1", [numero_edificio])
+            conexion.commit()
+            
+            mensaje = "Registro aceptada correctamente"
+        else:
+            mensaje = "No se encontró el registro"
+            
+    except Exception as e:
+        mensaje = "Error al mover registro: " + str(e)
+        
+    finally:
+        cursor.close()
+        conexion.close()
+        
+    return redirect('mostrar_registros')
 
 
