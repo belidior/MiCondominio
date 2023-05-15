@@ -6,6 +6,7 @@ from .forms import reservamicondominio
 import cx_Oracle
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -169,4 +170,29 @@ def aceptar_registro(request, numero_edificio):
         
     return redirect('mostrar_registros')
 
+
+def mostrar_registrosAPI(request):
+    try:
+        mensaje = ""
+        conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+        cursor = conexion.cursor()
+        cursor.execute("SELECT NumeroEdificio, NombreResidente, Area, FechaEstimada FROM reservamicondominio")
+        registros = cursor.fetchall()
+        columnas = [desc[0] for desc in cursor.description]  # Obtener los nombres de las columnas
+        registros_dict = []
+        for registro in registros:
+            registro_dict = dict(zip(columnas, registro))
+            registros_dict.append(registro_dict)
+    except Exception as e:
+        registros_dict = []
+        mensaje = "Error al obtener registros: " + str(e)
+    finally:
+        cursor.close()
+        conexion.close()
+
+    data = {
+        'registros': registros_dict,
+        'mensaje': mensaje
+    }
+    return JsonResponse(data)
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mostrar Registros</title>
+</head>
+<body>
+    <h1>Registros</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Número de Edificio</th>
+                <th>Nombre del Residente</th>
+                <th>Área</th>
+                <th>Fecha Estimada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in registros %}
+            <tr>
+                <td>{{ registro.NumeroEdificio }}</td>
+                <td>{{ registro.NombreResidente }}</td>
+                <td>{{ registro.Area }}</td>
+                <td>{{ registro.FechaEstimada }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>{{ mensaje }}</p>
+</body>
+</html>

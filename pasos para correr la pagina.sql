@@ -37,3 +37,4 @@ pasos para instalar la pagina correctamente
 7. ingresamos el siguiente comando python manage.py makemigrations
 8. En settings y en el .views de la pagina cambiamos la direccion de la base de datos.
 9. tiramos a andar la pagina con python manage.py runserver
+10. comando para post-man http://localhost:8000/mostrar-registros-api/
