@@ -170,6 +170,8 @@ def aceptar_registro(request, numero_edificio):
         
     return redirect('mostrar_registros')
 
+def mostrar_api(request):
+    return render(request, 'apiconsulta.html')
 
 def mostrar_registrosAPI(request):
     try:

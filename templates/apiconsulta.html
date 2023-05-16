@@ -1,30 +1,73 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mostrar Registros</title>
+  <title>Consultar Reservas</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Registros</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Número de Edificio</th>
-                <th>Nombre del Residente</th>
-                <th>Área</th>
-                <th>Fecha Estimada</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for registro in registros %}
-            <tr>
-                <td>{{ registro.NumeroEdificio }}</td>
-                <td>{{ registro.NombreResidente }}</td>
-                <td>{{ registro.Area }}</td>
-                <td>{{ registro.FechaEstimada }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <p>{{ mensaje }}</p>
+{% include "./headeradminlogin.html" %}
+  <h1>Consultar Reservas</h1>
+  <form id="formulario">
+    <div class="form-group">
+      <label for="edificio">Número de Edificio:</label>
+      <input type="text" class="form-control" id="edificio" name="edificio">
+    </div>
+    <button type="button" class="btn btn-primary" onclick="consultarReservas()">Consultar Reservas</button>
+  </form>
+  <div id="resultado" class="mt-4"></div>
+
+  <script>
+    function consultarReservas() {
+      var edificio = document.getElementById("edificio").value;
+      $.ajax({
+        url: "/mostrar-registros-api/",
+        type: "GET",
+        data: {
+          "edificio": edificio
+        },
+        dataType: "json",
+        success: function(data) {
+          var registros = data.registros;
+          var mensaje = data.mensaje;
+          var html = "";
+
+          if (registros.length > 0) {
+            var registroEncontrado = false;
+            for (var i = 0; i < registros.length; i++) {
+              if (registros[i].NUMEROEDIFICIO == edificio) {
+                var registro = registros[i];
+                html += '<table class="table">';
+                html += '<thead><tr><th>Número de Edificio</th><th>Nombre de Residente</th><th>Área</th><th>Fecha Estimada</th></tr></thead>';
+                html += '<tbody>';
+                html += '<tr><td>' + registro.NUMEROEDIFICIO + '</td><td>' + registro.NOMBRERESIDENTE + '</td><td>' + registro.AREA + '</td><td>' + registro.FECHAESTIMADA + '</td></tr>';
+                html += '</tbody></table>';
+                registroEncontrado = true;
+                break;
+              }
+            }
+
+            if (!registroEncontrado) {
+              html += "<p>No se encontró el número de edificio.</p>";
+            }
+          } else {
+            html += "<p>No se encontraron registros.</p>";
+          }
+
+          if (mensaje) {
+            html += "<p>" + mensaje + "</p>";
+          }
+
+          document.getElementById("resultado").innerHTML = html;
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          document.getElementById("resultado").innerHTML = "<p>Error al obtener registros: " + textStatus + "</p>";
+        }
+      });
+    }
+  </script>
 </body>
 </html>

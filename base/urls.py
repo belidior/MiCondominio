@@ -19,7 +19,7 @@ urlpatterns = [
     path('mostrar_registros/', views.mostrar_registros, name='mostrar_registros'),
     path('eliminar_registro/<int:numero_edificio>/', views.eliminar_registro, name='eliminar_registro'),
     path('aceptar_registro/<int:numero_edificio>/', views.aceptar_registro, name='aceptar_registro'),
-    path('mostrar-registros-api/', views.mostrar_registros, name='mostrar_registros_api'),
-
+    path('mostrar-registros-api/', views.mostrar_registrosAPI, name='mostrar_registros_api'),
+    path('mostrar_api/', views.mostrar_api, name='mostrar_api')
 
 ]
