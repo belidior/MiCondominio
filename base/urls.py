@@ -16,10 +16,12 @@ urlpatterns = [
     path('adminview/', views.admin_view, name='adminview'),
     path('homeloginadmin/', views.homeloginadmin, name='homeloginadmin'),
     path('headeradminlogin/', views.headeradminlogin, name='headeradminlogin'),
+    path('headeradminloginregistro/', views.headerloginadminregistro, name='headeradminloginregistro'),
     path('mostrar_registros/', views.mostrar_registros, name='mostrar_registros'),
     path('eliminar_registro/<int:numero_edificio>/', views.eliminar_registro, name='eliminar_registro'),
     path('aceptar_registro/<int:numero_edificio>/', views.aceptar_registro, name='aceptar_registro'),
     path('mostrar-registros-api/', views.mostrar_registrosAPI, name='mostrar_registros_api'),
-    path('mostrar_api/', views.mostrar_api, name='mostrar_api')
+    path('mostrar_api/', views.mostrar_api, name='mostrar_api'),
+    path('Registroadmin/', views.insertar_registroadmin, name='Registroadmin'),
 
 ]

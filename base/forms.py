@@ -1,6 +1,8 @@
 from django import forms
 from .models import reservamicondominio
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 class reservamicondominio(forms.ModelForm):
@@ -29,3 +31,11 @@ class ReservaAceptadaForm(forms.Form):
     NombreResidente = forms.CharField(max_length=50, label='Nombre del Residente')
     Area = forms.CharField(max_length=10, label='Área')
     FechaEstimada = forms.DateTimeField(initial=timezone.now, label='Fecha Estimada')
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField()
+    numeroEdificio = forms.IntegerField()
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email', 'numeroEdificio')

@@ -7,6 +7,9 @@ import cx_Oracle
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.http import JsonResponse
+from .forms import CustomUserCreationForm
+from django.contrib.sessions.backends.db import SessionStore
+import datetime
 
 
 # Create your views here.
@@ -31,6 +34,9 @@ def homeloginadmin(request):
     return render(request, 'homeloginadmin.html')
 def headeradminlogin(request):
     return render(request, 'headeradminlogin.html')
+def headerloginadminregistro(request):
+    return render(request, 'headeradminloginregistro.html')
+
 #######################################################################################################
 def login_view(request):
     if request.method == 'POST':
@@ -64,36 +70,116 @@ def login_viewadmin(request):
 #######################################################################################################
 def signup_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # log in the user
+
+            # Guardar el valor de numeroEdificio en la sesión del usuario
+            session = SessionStore()
+            session['numeroEdificio'] = form.cleaned_data['numeroEdificio']
+            session.save()
+
+            # Iniciar sesión del usuario
             login(request, user)
-            return redirect('home')
+            return redirect('homelogin')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'signup.html', {'form': form})
 #######################################################################################################
 def insertar_registro(request):
+    mensaje = None
+
     if request.method == 'POST':
         form = reservamicondominio(request.POST)
         if form.is_valid():
             datos = form.cleaned_data
-            try:
-                conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
-                cursor = conexion.cursor()
-                cursor.execute("INSERT INTO reservamicondominio(NumeroEdificio, NombreResidente, Area, FechaEstimada) VALUES (:1, :2, :3, :4)", [datos['NumeroEdificio'], datos['NombreResidente'], datos['Area'], datos['FechaEstimada']])
-                conexion.commit()
-                mensaje = "Solicitud enviada correctamente, le llegara una noticicacion a su correo en caso de ser aprobada"
-            except Exception as e:
-                mensaje = "Error al insertar registro: " + str(e)
-            finally:
-                cursor.close()
-                conexion.close()
+            fecha_estimada = datos['FechaEstimada']
+            area = datos['Area']
+
+            # Validar que la fecha estimada y área no choquen con registros existentes
+            if not area_esta_reservada(fecha_estimada, area):
+                try:
+                    conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+                    cursor = conexion.cursor()
+                    cursor.execute("INSERT INTO reservamicondominio(NumeroEdificio, NombreResidente, Area, FechaEstimada) VALUES (:1, :2, :3, :4)", [datos['NumeroEdificio'], datos['NombreResidente'], area, fecha_estimada])
+                    conexion.commit()
+                    mensaje = "Solicitud enviada correctamente, le llegará una notificación a su correo en caso de ser aprobada"
+                except Exception as e:
+                    mensaje = "Error al insertar registro: " + str(e)
+                finally:
+                    cursor.close()
+                    conexion.close()
+            else:
+                mensaje = "El área seleccionada no está disponible en la fecha y hora especificadas. Por favor, elija otra área o ajuste la fecha y hora."
     else:
-        form = reservamicondominio()
+        # Obtener los valores predefinidos para NumeroEdificio y NombreResidente
+        numero_edificio = request.session.get('numeroEdificio')
+        nombre_residente = request.user.username
+
+        # Crear el formulario con los valores iniciales
+        form = reservamicondominio(initial={'NumeroEdificio': numero_edificio, 'NombreResidente': nombre_residente})
         mensaje = None
+
     return render(request, 'Registro.html', {'form': form, 'mensaje': mensaje})
+
+def area_esta_reservada(fecha_estimada, area):
+    try:
+        conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+        cursor = conexion.cursor()
+        cursor.execute("SELECT COUNT(*) FROM reservamicondominio WHERE FechaEstimada = :1 AND Area = :2", [fecha_estimada, area])
+        count = cursor.fetchone()[0]
+        return count > 0
+    finally:
+        cursor.close()
+        conexion.close()
+
+#######################################################################################################
+def insertar_registroadmin(request):
+    mensaje = None
+
+    if request.method == 'POST':
+        form = reservamicondominio(request.POST)
+        if form.is_valid():
+            datos = form.cleaned_data
+            fecha_estimada = datos['FechaEstimada']
+
+            # Validar que la fecha estimada no choque con registros existentes
+            if not fecha_estimada_choca(fecha_estimada):
+                try:
+                    conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+                    cursor = conexion.cursor()
+                    cursor.execute("INSERT INTO reservamicondominio(NumeroEdificio, NombreResidente, Area, FechaEstimada) VALUES (:1, :2, :3, :4)", [datos['NumeroEdificio'], datos['NombreResidente'], datos['Area'], fecha_estimada])
+                    conexion.commit()
+                    mensaje = "Solicitud enviada correctamente, le llegará una notificación a su correo en caso de ser aprobada"
+                except Exception as e:
+                    mensaje = "Error al insertar registro: " + str(e)
+                finally:
+                    cursor.close()
+                    conexion.close()
+            else:
+                mensaje = "La fecha seleccionada no está disponible, seleccione otra fecha."
+    else:
+        # Obtener los valores predefinidos para NumeroEdificio y NombreResidente
+        numero_edificio = request.session.get('numeroEdificio')
+        nombre_residente = request.user.username
+
+        # Crear el formulario con los valores iniciales
+        form = reservamicondominio(initial={'NumeroEdificio': numero_edificio, 'NombreResidente': nombre_residente})
+        mensaje = None
+
+    return render(request, 'registroadmin.html', {'form': form, 'mensaje': mensaje})
+
+def fecha_estimada_choca(fecha_estimada):
+    try:
+        conexion = cx_Oracle.connect('micondominio/16511@127.0.0.1:1521/xe')
+        cursor = conexion.cursor()
+        cursor.execute("SELECT COUNT(*) FROM reservamicondominio WHERE FechaEstimada = :1", [fecha_estimada])
+        count = cursor.fetchone()[0]
+        return count > 0
+    finally:
+        cursor.close()
+        conexion.close()
+
 #######################################################################################################
 def mostrar_registros(request):
     try:
